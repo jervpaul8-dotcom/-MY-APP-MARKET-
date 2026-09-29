@@ -1,823 +1,622 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>APK Uploader · download hub</title>
-    <!-- Font Awesome 6 (free) for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>APK upload · simple app</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-        body {
-            background: linear-gradient(145deg, #f0f4fa 0%, #e6ecf5 100%);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 1.5rem 1rem 3rem;
-        }
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      background: #f7f9fc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 1.5rem;
+    }
 
-        .app-container {
-            max-width: 1000px;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 2.5rem;
-            box-shadow: 0 25px 45px -12px rgba(0, 20, 40, 0.35),
-                        0 2px 10px 0 rgba(0, 0, 0, 0.05),
-                        inset 0 1px 0 0 rgba(255, 255, 255, 0.8);
-            padding: 2rem 2rem 2.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            transition: all 0.2s;
-        }
+    .app-card {
+      background: #ffffff;
+      max-width: 640px;
+      width: 100%;
+      border-radius: 2rem;
+      box-shadow: 0 20px 35px -8px rgba(0, 20, 30, 0.2), 0 8px 16px -6px rgba(0, 0, 0, 0.05);
+      padding: 2rem 2rem 2.5rem;
+      transition: all 0.2s ease;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(2px);
+    }
 
-        .header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-        }
+    h1 {
+      font-size: 1.9rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: #0b1c2e;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 0.25rem;
+    }
 
-        .header-icon {
-            background: #1e2b3c;
-            color: white;
-            width: 3.5rem;
-            height: 3.5rem;
-            border-radius: 1.2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            box-shadow: 0 8px 18px -6px rgba(0, 20, 40, 0.3);
-        }
+    h1 span {
+      background: #eef3fe;
+      border-radius: 100px;
+      padding: 0.2rem 0.8rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #1f5f9e;
+      letter-spacing: 0.01em;
+      border: 1px solid #d0e0ff;
+    }
 
-        .header h1 {
-            font-size: 2rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            color: #0e1e2f;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
+    .subhead {
+      color: #4b5e71;
+      margin-bottom: 2rem;
+      font-size: 1rem;
+      border-left: 4px solid #9bb9e0;
+      padding-left: 1rem;
+      background: #f3f8ff;
+      border-radius: 0 12px 12px 0;
+      padding: 0.8rem 1rem;
+      margin-top: 0.4rem;
+    }
 
-        .header h1 span {
-            font-weight: 300;
-            color: #4a5f7a;
-            font-size: 1.2rem;
-            margin-left: 0.5rem;
-        }
+    .drop-zone {
+      border: 2px dashed #b7c9e0;
+      background: #fafdff;
+      border-radius: 1.8rem;
+      padding: 2rem 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.8rem;
+      margin-bottom: 2rem;
+    }
 
-        /* upload zone */
-        .upload-section {
-            background: #ffffffcc;
-            border-radius: 2rem;
-            padding: 1.75rem 2rem;
-            margin-bottom: 2.5rem;
-            border: 1px solid #ffffff;
-            box-shadow: 0 8px 25px -12px rgba(0, 0, 0, 0.2);
-        }
+    .drop-zone:hover,
+    .drop-zone.drag-over {
+      background: #ecf5ff;
+      border-color: #3b82f6;
+      transform: scale(1.005);
+    }
 
-        .section-label {
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            font-weight: 600;
-            color: #1a2c42;
-            margin-bottom: 1.2rem;
-            font-size: 1.2rem;
-        }
+    .drop-zone-icon {
+      font-size: 3.2rem;
+      line-height: 1;
+      filter: drop-shadow(0 6px 8px rgba(0, 80, 200, 0.1));
+    }
 
-        .section-label i {
-            color: #1e2b3c;
-            background: #d9e2ef;
-            padding: 0.4rem;
-            border-radius: 0.7rem;
-            font-size: 1rem;
-            width: 2rem;
-            text-align: center;
-        }
+    .drop-zone-text {
+      font-weight: 500;
+      color: #1a344d;
+    }
 
-        .drop-area {
-            border: 2px dashed #9bb1ca;
-            border-radius: 1.5rem;
-            padding: 2rem 1.5rem;
-            text-align: center;
-            background: #f8fcff;
-            transition: all 0.2s ease;
-            cursor: pointer;
-            margin-bottom: 1rem;
-        }
+    .drop-zone-sub {
+      font-size: 0.85rem;
+      color: #667e99;
+      margin-top: 0.2rem;
+    }
 
-        .drop-area:hover {
-            border-color: #1e2b3c;
-            background: #eef4fe;
-        }
+    .file-input {
+      display: none;
+    }
 
-        .drop-area i {
-            font-size: 3rem;
-            color: #3c5a7d;
-            margin-bottom: 0.75rem;
-            opacity: 0.9;
-        }
+    .browse-btn {
+      background: white;
+      border: 1.5px solid #cddef5;
+      border-radius: 100px;
+      padding: 0.5rem 1.5rem;
+      font-weight: 500;
+      color: #1d4c7c;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      transition: all 0.15s;
+      margin-top: 0.5rem;
+    }
 
-        .drop-area p {
-            font-size: 1.2rem;
-            font-weight: 500;
-            color: #1e2b3c;
-        }
+    .browse-btn:hover {
+      background: #e6f0ff;
+      border-color: #6c9fd1;
+    }
 
-        .drop-area small {
-            display: block;
-            margin-top: 0.35rem;
-            color: #5b6f87;
-            font-size: 0.9rem;
-        }
+    .file-pill {
+      background: #f0f6ff;
+      border-radius: 60px;
+      padding: 1rem 1.4rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.8rem;
+      border: 1px solid #cfe0f5;
+      box-shadow: 0 2px 6px rgba(0, 70, 150, 0.03);
+      transition: 0.15s;
+    }
 
-        .file-input {
-            display: none;
-        }
+    .file-info {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+      overflow: hidden;
+    }
 
-        .upload-actions {
-            display: flex;
-            gap: 0.8rem;
-            flex-wrap: wrap;
-            align-items: center;
-            margin-top: 0.8rem;
-        }
+    .file-icon {
+      background: #ffffff;
+      border-radius: 60px;
+      width: 42px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      box-shadow: 0 4px 8px rgba(0, 50, 120, 0.08);
+      flex-shrink: 0;
+    }
 
-        .btn {
-            border: none;
-            background: #ffffff;
-            padding: 0.8rem 1.6rem;
-            border-radius: 3rem;
-            font-weight: 600;
-            font-size: 1rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.55rem;
-            cursor: pointer;
-            transition: all 0.15s;
-            border: 1px solid #ccdae9;
-            color: #1e2b3c;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.02);
-        }
+    .file-details {
+      overflow: hidden;
+    }
 
-        .btn i {
-            font-size: 1rem;
-        }
+    .file-name {
+      font-weight: 600;
+      color: #0e2740;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 220px;
+    }
 
-        .btn-primary {
-            background: #1e2b3c;
-            border: 1px solid #1e2b3c;
-            color: white;
-            box-shadow: 0 10px 18px -8px #1e2b3c99;
-        }
+    .file-size {
+      font-size: 0.8rem;
+      color: #597a9b;
+      margin-top: 0.1rem;
+    }
 
-        .btn-primary:hover {
-            background: #0f1a26;
-            border-color: #0f1a26;
-        }
+    .remove-btn {
+      background: transparent;
+      border: none;
+      font-size: 1.6rem;
+      line-height: 1;
+      color: #8fa8c2;
+      cursor: pointer;
+      padding: 0.3rem 0.5rem;
+      border-radius: 30px;
+      transition: all 0.1s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      flex-shrink: 0;
+    }
 
-        .btn-secondary:hover {
-            background: #e3ecf9;
-            border-color: #b0c5dd;
-        }
+    .remove-btn:hover {
+      background: #ffe6e6;
+      color: #c03535;
+    }
 
-        .btn:disabled {
-            opacity: 0.5;
-            pointer-events: none;
-            filter: grayscale(0.5);
-        }
+    .upload-btn {
+      background: #0b1c2e;
+      color: white;
+      border: none;
+      width: 100%;
+      padding: 1rem 1.8rem;
+      border-radius: 60px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.7rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 8px 18px -6px rgba(10, 30, 60, 0.3);
+      letter-spacing: 0.01em;
+      border: 1px solid #1e3b5c;
+    }
 
-        .file-preview {
-            margin-top: 1.2rem;
-            background: #ecf2fa;
-            border-radius: 1.2rem;
-            padding: 0.8rem 1.2rem;
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            flex-wrap: wrap;
-            font-size: 0.95rem;
-            border: 1px solid #cbd9eb;
-        }
+    .upload-btn:hover:not(:disabled) {
+      background: #132d45;
+      box-shadow: 0 12px 24px -8px rgba(0, 30, 70, 0.4);
+      transform: translateY(-1px);
+    }
 
-        .file-preview i {
-            color: #1e2b3c;
-            font-size: 1.3rem;
-        }
+    .upload-btn:disabled {
+      background: #cbd8e6;
+      border-color: #b5c6d9;
+      color: #7b8fa5;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
 
-        .file-preview .file-name {
-            font-weight: 600;
-            word-break: break-all;
-            color: #0d1b2a;
-        }
+    .upload-btn .spinner {
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 0.8s linear infinite;
+      display: inline-block;
+    }
 
-        .file-preview .file-size {
-            color: #4b5e77;
-            font-size: 0.85rem;
-            margin-left: auto;
-            white-space: nowrap;
-            background: #d4e0ef;
-            padding: 0.2rem 0.8rem;
-            border-radius: 2rem;
-        }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
 
-        /* Apk list */
-        .list-section {
-            margin-top: 0.5rem;
-        }
+    .status-message {
+      margin-top: 1.6rem;
+      padding: 1rem 1.4rem;
+      border-radius: 1.2rem;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: #f4faff;
+      border-left: 5px solid #3874c4;
+      color: #1a3958;
+    }
 
-        .list-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.3rem;
-        }
+    .status-message.success {
+      background: #eafff0;
+      border-left-color: #1f9e5e;
+      color: #0d4b2a;
+    }
 
-        .list-header .section-label {
-            margin-bottom: 0;
-        }
+    .status-message.error {
+      background: #fff3f3;
+      border-left-color: #cf2e2e;
+      color: #6b1a1a;
+    }
 
-        .badge {
-            background: #1e2b3c;
-            color: white;
-            padding: 0.35rem 1.1rem;
-            border-radius: 2rem;
-            font-size: 0.85rem;
-            font-weight: 600;
-            letter-spacing: 0.01em;
-        }
+    .status-icon {
+      font-size: 1.4rem;
+    }
 
-        .apk-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.85rem;
-            max-height: 460px;
-            overflow-y: auto;
-            padding-right: 0.4rem;
-        }
+    .hidden {
+      display: none !important;
+    }
 
-        .apk-list::-webkit-scrollbar {
-            width: 6px;
-        }
+    .footer-note {
+      margin-top: 2rem;
+      font-size: 0.75rem;
+      color: #8f9fb1;
+      text-align: center;
+      border-top: 1px solid #e6ecf5;
+      padding-top: 1.2rem;
+    }
 
-        .apk-list::-webkit-scrollbar-track {
-            background: #d9e2ef;
-            border-radius: 10px;
-        }
-
-        .apk-list::-webkit-scrollbar-thumb {
-            background: #7d95b3;
-            border-radius: 10px;
-        }
-
-        .apk-item {
-            background: white;
-            border-radius: 1.5rem;
-            padding: 1rem 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            box-shadow: 0 5px 12px -6px rgba(0, 0, 0, 0.1);
-            border: 1px solid #e2ebf6;
-            transition: all 0.15s;
-            flex-wrap: wrap;
-        }
-
-        .apk-item:hover {
-            border-color: #b6cae2;
-            box-shadow: 0 12px 22px -12px #1e2b3c40;
-            transform: scale(1.005);
-        }
-
-        .apk-icon {
-            background: #1e2b3c;
-            color: white;
-            width: 3rem;
-            height: 3rem;
-            border-radius: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            flex-shrink: 0;
-            box-shadow: 0 6px 12px -6px #1e2b3c80;
-        }
-
-        .apk-info {
-            flex: 1;
-            min-width: 160px;
-        }
-
-        .apk-name {
-            font-weight: 700;
-            font-size: 1.05rem;
-            color: #0d1b2a;
-            word-break: break-word;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        .apk-meta {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-top: 0.3rem;
-            font-size: 0.8rem;
-            color: #4b5e77;
-            flex-wrap: wrap;
-        }
-
-        .apk-meta i {
-            margin-right: 0.2rem;
-            font-size: 0.7rem;
-            color: #647b99;
-        }
-
-        .download-btn {
-            background: #eaf1fb;
-            border: 1px solid #b9cee8;
-            padding: 0.6rem 1.2rem;
-            border-radius: 3rem;
-            font-weight: 600;
-            color: #1e2b3c;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            cursor: pointer;
-            transition: all 0.15s;
-            font-size: 0.9rem;
-            white-space: nowrap;
-            text-decoration: none;
-            margin-left: auto;
-        }
-
-        .download-btn:hover {
-            background: #1e2b3c;
-            border-color: #1e2b3c;
-            color: white;
-        }
-
-        .download-btn i {
-            font-size: 0.9rem;
-        }
-
-        .empty-state {
-            background: #ffffffb3;
-            border-radius: 1.8rem;
-            padding: 2.5rem 1.5rem;
-            text-align: center;
-            color: #4f6582;
-            border: 2px dashed #c1d3e8;
-            font-weight: 500;
-        }
-
-        .empty-state i {
-            font-size: 2.5rem;
-            margin-bottom: 0.8rem;
-            color: #a5bad4;
-        }
-
-        .toast-message {
-            position: fixed;
-            bottom: 25px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #1e2b3c;
-            color: white;
-            padding: 0.8rem 1.8rem;
-            border-radius: 3rem;
-            font-weight: 500;
-            box-shadow: 0 18px 30px -8px #0b1a2b;
-            display: flex;
-            align-items: center;
-            gap: 0.7rem;
-            z-index: 999;
-            opacity: 0;
-            transition: opacity 0.2s;
-            pointer-events: none;
-            font-size: 0.95rem;
-        }
-
-        .toast-message.show {
-            opacity: 1;
-        }
-
-        .toast-message i {
-            color: #a5d6ff;
-        }
-
-        .footer-note {
-            text-align: center;
-            margin-top: 1.8rem;
-            color: #5f738b;
-            font-size: 0.8rem;
-        }
-
-        @media (max-width: 550px) {
-            .app-container {
-                padding: 1.5rem;
-            }
-            .header h1 {
-                font-size: 1.6rem;
-            }
-            .apk-item {
-                padding: 0.9rem 1rem;
-            }
-            .download-btn {
-                padding: 0.5rem 1rem;
-            }
-        }
-    </style>
+    .limit-badge {
+      display: inline-block;
+      background: #e8f0fe;
+      border-radius: 60px;
+      padding: 0.2rem 0.8rem;
+      font-size: 0.75rem;
+      color: #2b578b;
+      margin-left: 0.5rem;
+      font-weight: 500;
+    }
+  </style>
 </head>
 <body>
-    <div class="app-container">
-        <!-- Header -->
-        <div class="header">
-            <div class="header-icon">
-                <i class="fas fa-robot"></i>
-            </div>
-            <h1>
-                APK Uploader
-                <span>share & download</span>
-            </h1>
-        </div>
-
-        <!-- Upload Section -->
-        <div class="upload-section">
-            <div class="section-label">
-                <i class="fas fa-cloud-upload-alt"></i>
-                Upload your APK
-            </div>
-
-            <!-- Drop zone / file selector -->
-            <div class="drop-area" id="dropArea">
-                <i class="fas fa-file-arrow-up"></i>
-                <p>Drag & drop an .apk file here</p>
-                <small>or click to browse from your device</small>
-                <input type="file" id="fileInput" class="file-input" accept=".apk,application/vnd.android.package-archive">
-            </div>
-
-            <div class="upload-actions">
-                <button class="btn btn-primary" id="uploadBtn" disabled>
-                    <i class="fas fa-upload"></i> Upload APK
-                </button>
-                <button class="btn btn-secondary" id="clearBtn">
-                    <i class="fas fa-eraser"></i> Clear
-                </button>
-            </div>
-
-            <!-- File preview -->
-            <div id="filePreview" class="file-preview" style="display: none;">
-                <i class="fas fa-file-android"></i>
-                <span class="file-name" id="previewFileName">—</span>
-                <span class="file-size" id="previewFileSize"></span>
-            </div>
-        </div>
-
-        <!-- APK List -->
-        <div class="list-section">
-            <div class="list-header">
-                <div class="section-label">
-                    <i class="fas fa-download"></i>
-                    Available downloads
-                </div>
-                <div class="badge" id="apkCount">0 APKs</div>
-            </div>
-
-            <div id="apkListContainer" class="apk-list">
-                <!-- dynamic items appear here -->
-                <div class="empty-state" id="emptyState">
-                    <i class="fas fa-box-open"></i>
-                    <p>No APKs uploaded yet</p>
-                    <small style="display:block; margin-top:0.5rem;">Upload an .apk file to share it</small>
-                </div>
-            </div>
-        </div>
-
-        <div class="footer-note">
-            <i class="fas fa-shield-alt"></i> files stored locally in your browser
-        </div>
+  <div class="app-card">
+    <h1>
+      📦 APK Upload
+      <span>beta</span>
+    </h1>
+    <div class="subhead">
+      Select or drop an .apk file — it will be validated and uploaded (simulated).
     </div>
 
-    <!-- Toast message -->
-    <div id="toast" class="toast-message">
-        <i class="fas fa-check-circle"></i>
-        <span id="toastText">APK uploaded!</span>
+    <!-- Drop zone -->
+    <div class="drop-zone" id="dropZone">
+      <div class="drop-zone-icon">📲</div>
+      <div class="drop-zone-text">Drag & drop your APK here</div>
+      <div class="drop-zone-sub">or</div>
+      <button class="browse-btn" id="browseBtn" type="button">
+        <span>📁</span> Browse files
+      </button>
+      <input type="file" id="fileInput" class="file-input" accept=".apk,application/vnd.android.package-archive">
     </div>
 
-    <script>
-        (function(){
-            // ---------- state ----------
-            // Each apk item: { id, name, size, blob, url }
-            let apkFiles = [];
+    <!-- Selected file card (hidden by default) -->
+    <div id="fileCard" class="file-pill hidden">
+      <div class="file-info">
+        <div class="file-icon">🤖</div>
+        <div class="file-details">
+          <div class="file-name" id="fileName">example.apk</div>
+          <div class="file-size" id="fileSize">2.4 MB</div>
+        </div>
+      </div>
+      <button class="remove-btn" id="removeFileBtn" title="Remove file">✕</button>
+    </div>
 
-            // DOM elements
-            const dropArea = document.getElementById('dropArea');
-            const fileInput = document.getElementById('fileInput');
-            const uploadBtn = document.getElementById('uploadBtn');
-            const clearBtn = document.getElementById('clearBtn');
-            const filePreview = document.getElementById('filePreview');
-            const previewFileName = document.getElementById('previewFileName');
-            const previewFileSize = document.getElementById('previewFileSize');
-            const apkListContainer = document.getElementById('apkListContainer');
-            const emptyState = document.getElementById('emptyState');
-            const apkCountSpan = document.getElementById('apkCount');
-            const toast = document.getElementById('toast');
-            const toastText = document.getElementById('toastText');
+    <!-- Upload button -->
+    <button class="upload-btn" id="uploadBtn" disabled>
+      ⬆️ Upload APK
+    </button>
 
-            // currently selected file (for upload)
-            let selectedFile = null;
+    <!-- Status message area -->
+    <div id="statusMessage" class="status-message hidden">
+      <span class="status-icon" id="statusIcon">ℹ️</span>
+      <span id="statusText">No file selected</span>
+    </div>
 
-            // ---------- helpers ----------
-            function formatFileSize(bytes) {
-                if (bytes === 0) return '0 B';
-                const k = 1024;
-                const sizes = ['B', 'KB', 'MB', 'GB'];
-                const i = Math.floor(Math.log(bytes) / Math.log(k));
-                return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
-            }
+    <div class="footer-note">
+      ⚡ Max file size: 150 MB · Only .apk accepted
+    </div>
+  </div>
 
-            // Show toast message
-            function showToast(message, isSuccess = true) {
-                toastText.textContent = message;
-                const icon = toast.querySelector('i');
-                if (isSuccess) {
-                    icon.className = 'fas fa-check-circle';
-                    icon.style.color = '#a5d6ff';
-                } else {
-                    icon.className = 'fas fa-exclamation-circle';
-                    icon.style.color = '#ffb3a5';
-                }
-                toast.classList.add('show');
-                setTimeout(() => {
-                    toast.classList.remove('show');
-                }, 2500);
-            }
+  <script>
+    (function() {
+      // --- DOM refs ---
+      const dropZone = document.getElementById('dropZone');
+      const fileInput = document.getElementById('fileInput');
+      const browseBtn = document.getElementById('browseBtn');
+      const fileCard = document.getElementById('fileCard');
+      const fileNameEl = document.getElementById('fileName');
+      const fileSizeEl = document.getElementById('fileSize');
+      const removeFileBtn = document.getElementById('removeFileBtn');
+      const uploadBtn = document.getElementById('uploadBtn');
+      const statusMessage = document.getElementById('statusMessage');
+      const statusIcon = document.getElementById('statusIcon');
+      const statusText = document.getElementById('statusText');
 
-            // Update the preview UI based on selectedFile
-            function updatePreview() {
-                if (selectedFile) {
-                    filePreview.style.display = 'flex';
-                    previewFileName.textContent = selectedFile.name;
-                    previewFileSize.textContent = formatFileSize(selectedFile.size);
-                    uploadBtn.disabled = false;
-                } else {
-                    filePreview.style.display = 'none';
-                    previewFileName.textContent = '—';
-                    previewFileSize.textContent = '';
-                    uploadBtn.disabled = true;
-                }
-            }
+      // --- State ---
+      let selectedFile = null;
+      let isUploading = false;
 
-            // Reset file input and selected file
-            function resetFileSelection() {
-                fileInput.value = '';
-                selectedFile = null;
-                updatePreview();
-            }
+      // --- Utility: format file size ---
+      function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+      }
 
-            // Render the APK list from apkFiles array
-            function renderApkList() {
-                // update count
-                const count = apkFiles.length;
-                apkCountSpan.textContent = count + (count === 1 ? ' APK' : ' APKs');
+      // --- Show status message (type: 'info', 'success', 'error') ---
+      function setStatus(message, type = 'info') {
+        statusMessage.classList.remove('hidden', 'success', 'error');
+        if (type === 'success') {
+          statusMessage.classList.add('success');
+          statusIcon.textContent = '✅';
+        } else if (type === 'error') {
+          statusMessage.classList.add('error');
+          statusIcon.textContent = '❌';
+        } else {
+          statusIcon.textContent = 'ℹ️';
+        }
+        statusText.textContent = message;
+      }
 
-                // clear container except possibly keep empty state? We'll rebuild.
-                // Remove all children except the empty state? Better: rebuild dynamically.
-                // We'll remove all children, then add empty state if needed.
-                apkListContainer.innerHTML = '';
+      // --- Clear status (hide) ---
+      function clearStatus() {
+        statusMessage.classList.add('hidden');
+        statusMessage.classList.remove('success', 'error');
+        statusText.textContent = '';
+      }
 
-                if (apkFiles.length === 0) {
-                    // show empty state
-                    apkListContainer.appendChild(emptyState);
-                    return;
-                }
+      // --- Reset file selection (UI + state) ---
+      function resetFileSelection() {
+        selectedFile = null;
+        fileInput.value = '';        // clear native input
+        fileCard.classList.add('hidden');
+        uploadBtn.disabled = true;
+        clearStatus();
 
-                // Sort: newest first (higher id = newer)
-                const sorted = [...apkFiles].sort((a, b) => b.id - a.id);
+        // Remove any drag-over highlight
+        dropZone.classList.remove('drag-over');
+      }
 
-                sorted.forEach(apk => {
-                    const item = document.createElement('div');
-                    item.className = 'apk-item';
+      // --- Update UI with selected file ---
+      function setSelectedFile(file) {
+        // Validate extension .apk
+        const isApk = file.name.toLowerCase().endsWith('.apk');
+        if (!isApk) {
+          setStatus('Only .apk files are allowed.', 'error');
+          resetFileSelection(); // clear invalid file
+          return;
+        }
 
-                    // icon
-                    const iconDiv = document.createElement('div');
-                    iconDiv.className = 'apk-icon';
-                    iconDiv.innerHTML = '<i class="fab fa-android"></i>';
+        // Optional size limit (150 MB)
+        const MAX_SIZE = 150 * 1024 * 1024; // 150MB
+        if (file.size > MAX_SIZE) {
+          setStatus(`File too large (max 150 MB). Selected: ${formatFileSize(file.size)}`, 'error');
+          resetFileSelection();
+          return;
+        }
 
-                    // info
-                    const infoDiv = document.createElement('div');
-                    infoDiv.className = 'apk-info';
+        // Valid file — store it
+        selectedFile = file;
 
-                    const nameDiv = document.createElement('div');
-                    nameDiv.className = 'apk-name';
-                    nameDiv.innerHTML = `<i class="fas fa-file-android" style="color: #1e2b3c; font-size: 1rem;"></i> ${escapeHtml(apk.name)}`;
+        // Update file card UI
+        fileNameEl.textContent = file.name;
+        fileSizeEl.textContent = formatFileSize(file.size);
+        fileCard.classList.remove('hidden');
+        uploadBtn.disabled = false;
+        clearStatus();  // remove previous status
+        setStatus(`Ready to upload: ${file.name}`, 'info');
+      }
 
-                    const metaDiv = document.createElement('div');
-                    metaDiv.className = 'apk-meta';
-                    metaDiv.innerHTML = `
-                        <span><i class="fas fa-database"></i> ${formatFileSize(apk.size)}</span>
-                        <span><i class="fas fa-calendar-alt"></i> ${new Date(apk.id).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-                    `;
+      // --- Handle file input change (browse) ---
+      fileInput.addEventListener('change', (e) => {
+        if (isUploading) return;
+        const files = e.target.files;
+        if (!files || files.length === 0) {
+          // if user cancels, but we keep previous selection? But change didn't produce file.
+          // We do not reset if there was a previous selected file? Actually if they cancel, no new file selected.
+          // But the input might have been cleared? Better: if no files, we do nothing (preserve previous file)
+          // However, to sync UI we need to check if input value is empty; if so, but previous selectedFile exists, we want to keep it.
+          // We'll just return.
+          return;
+        }
 
-                    infoDiv.appendChild(nameDiv);
-                    infoDiv.appendChild(metaDiv);
+        // Only take the first file
+        const file = files[0];
+        // if it's not apk, setSelectedFile will handle error and reset.
+        // But if invalid, resetFileSelection clears input and selectedFile.
+        setSelectedFile(file);
+        // Note: if invalid, input.value gets cleared in resetFileSelection.
+      });
 
-                    // download button (anchor)
-                    const downloadLink = document.createElement('a');
-                    downloadLink.className = 'download-btn';
-                    downloadLink.href = apk.url;
-                    downloadLink.download = apk.name; // forces download with original name
-                    downloadLink.innerHTML = '<i class="fas fa-download"></i> Download';
+      // --- Browse button triggers file input click ---
+      browseBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (isUploading) return;
+        fileInput.click();
+      });
 
-                    item.appendChild(iconDiv);
-                    item.appendChild(infoDiv);
-                    item.appendChild(downloadLink);
+      // --- Drag & drop handling ---
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        });
+      });
 
-                    apkListContainer.appendChild(item);
-                });
-            }
+      dropZone.addEventListener('dragenter', () => {
+        if (isUploading) return;
+        dropZone.classList.add('drag-over');
+      });
 
-            // simple escape for HTML (names)
-            function escapeHtml(text) {
-                const div = document.createElement('div');
-                div.textContent = text;
-                return div.innerHTML;
-            }
+      dropZone.addEventListener('dragover', () => {
+        if (isUploading) return;
+        dropZone.classList.add('drag-over');
+      });
 
-            // Add a new APK to the list (with blob URL)
-            function addApkFile(file) {
-                // create object URL for the blob
-                const url = URL.createObjectURL(file);
-                const newApk = {
-                    id: Date.now(),          // also used as timestamp
-                    name: file.name,
-                    size: file.size,
-                    blob: file,              // keep reference if needed
-                    url: url,
-                };
-                apkFiles.push(newApk);
-                renderApkList();
-                showToast(`"${file.name}" added to downloads`, true);
-            }
+      dropZone.addEventListener('dragleave', () => {
+        dropZone.classList.remove('drag-over');
+      });
 
-            // Clear selected file (but keep apk list)
-            function clearSelection() {
-                resetFileSelection();
-                showToast('Selection cleared', true);
-            }
+      dropZone.addEventListener('drop', (e) => {
+        dropZone.classList.remove('drag-over');
+        if (isUploading) return;
 
-            // Upload (add) the selected file to the list
-            function uploadSelectedFile() {
-                if (!selectedFile) {
-                    showToast('No file selected', false);
-                    return;
-                }
+        const dt = e.dataTransfer;
+        if (!dt) return;
 
-                // optional: validate extension .apk
-                const ext = selectedFile.name.split('.').pop().toLowerCase();
-                if (ext !== 'apk') {
-                    showToast('Only .apk files are allowed', false);
-                    return;
-                }
+        const files = dt.files;
+        if (files.length === 0) return;
 
-                // add to list
-                addApkFile(selectedFile);
+        const file = files[0];
+        // if it's not apk, setSelectedFile will handle error and reset
+        setSelectedFile(file);
 
-                // reset file input & preview
-                resetFileSelection();
+        // Also reset fileInput value so that if they click browse later, it doesn't show old file
+        fileInput.value = '';
+      });
 
-                // re-render list (already done in addApkFile, but safe)
-                // renderApkList();  // called inside addApkFile
-            }
+      // --- Remove file button ---
+      removeFileBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (isUploading) return;
+        resetFileSelection();
+        setStatus('File removed.', 'info');
+      });
 
-            // ---------- event listeners ----------
+      // --- Simulate upload process ---
+      function simulateUpload() {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            resolve({ success: true });
+          }, 1800);
+        });
+      }
 
-            // Drop area click -> open file dialog
-            dropArea.addEventListener('click', () => {
-                fileInput.click();
-            });
+      // --- Upload button click ---
+      uploadBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        if (isUploading) return;
+        if (!selectedFile) {
+          setStatus('No file selected.', 'error');
+          return;
+        }
 
-            // File input change
-            fileInput.addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    // validate .apk
-                    const ext = file.name.split('.').pop().toLowerCase();
-                    if (ext !== 'apk') {
-                        showToast('Please select an .apk file', false);
-                        fileInput.value = '';
-                        return;
-                    }
-                    selectedFile = file;
-                    updatePreview();
-                } else {
-                    selectedFile = null;
-                    updatePreview();
-                }
-            });
+        // Double-check extension again (redundant but safe)
+        if (!selectedFile.name.toLowerCase().endsWith('.apk')) {
+          setStatus('Only .apk files can be uploaded.', 'error');
+          resetFileSelection();
+          return;
+        }
 
-            // Drag & drop events
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                dropArea.addEventListener(eventName, (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                });
-            });
+        // Start upload simulation
+        isUploading = true;
+        uploadBtn.disabled = true;
+        // Change button appearance and show spinner
+        uploadBtn.innerHTML = '<span class="spinner"></span> Uploading...';
+        clearStatus();
+        setStatus(`Uploading ${selectedFile.name} ...`, 'info');
 
-            dropArea.addEventListener('dragenter', () => {
-                dropArea.style.borderColor = '#1e2b3c';
-                dropArea.style.background = '#eef4fe';
-            });
+        try {
+          // Simulate async upload
+          await simulateUpload();
 
-            dropArea.addEventListener('dragleave', () => {
-                dropArea.style.borderColor = '#9bb1ca';
-                dropArea.style.background = '#f8fcff';
-            });
+          // On success
+          setStatus(`✅ APK "${selectedFile.name}" uploaded successfully (simulated).`, 'success');
+          // Keep file info? It's okay to keep, but maybe we clear after success? 
+          // Better to keep but disable upload again? Let's reset file state after a moment.
+          // But we want user to see success. We'll reset file selection but leave status.
+          // However, resetFileSelection clears status too — we'll do manual clearing.
+          selectedFile = null;
+          fileInput.value = '';
+          fileCard.classList.add('hidden');
+          uploadBtn.disabled = true;   // stays disabled since no file
+          // Keep the success message (do not clear)
+        } catch (error) {
+          setStatus('Upload failed. Please try again.', 'error');
+          // Re-enable upload button if there's still a selected file? 
+          // But selectedFile still exists? We didn't clear it on error.
+          uploadBtn.disabled = false;
+        } finally {
+          isUploading = false;
+          // Restore button content
+          uploadBtn.innerHTML = '⬆️ Upload APK';
+          // If selectedFile is null (success case), button disabled stays true.
+          // If selectedFile is still present (error case), we want to enable button.
+          if (selectedFile) {
+            uploadBtn.disabled = false;
+          } else {
+            uploadBtn.disabled = true;
+          }
+        }
+      });
 
-            dropArea.addEventListener('drop', (e) => {
-                dropArea.style.borderColor = '#9bb1ca';
-                dropArea.style.background = '#f8fcff';
+      // --- Initial status: no file, button disabled ---
+      uploadBtn.disabled = true;
+      clearStatus();
+      setStatus('No file selected. Drop or browse an APK.', 'info');
 
-                const files = e.dataTransfer.files;
-                if (files.length === 0) return;
+      // Prevent default drag/drop on window (so browser doesn't open file)
+      window.addEventListener('dragover', (e) => e.preventDefault());
+      window.addEventListener('drop', (e) => e.preventDefault());
 
-                const file = files[0]; // only first file
-                const ext = file.name.split('.').pop().toLowerCase();
-                if (ext !== 'apk') {
-                    showToast('Only .apk files are supported', false);
-                    return;
-                }
+      // Minor: if user clicks drop zone (not on browse button), open file dialog? 
+      // Good UX: click on drop zone triggers file input.
+      dropZone.addEventListener('click', (e) => {
+        // If the click target is the browse button or inside it, let the button handle it.
+        if (browseBtn.contains(e.target)) {
+          return; // browse button already handles
+        }
+        // Avoid triggering when clicking on the hidden file input (it's invisible)
+        if (e.target === fileInput) return;
+        if (isUploading) return;
+        fileInput.click();
+      });
 
-                // set as selected file
-                selectedFile = file;
-                // update file input value? cannot set directly, but we can store in memory and preview.
-                // we also want to reflect in input (but file input is readonly for security)
-                // we can just update preview and keep selectedFile.
-                updatePreview();
-
-                // also we can set fileInput.files? that's not possible directly, but we can use DataTransfer
-                // (not necessary; we rely on selectedFile variable)
-                // But to keep consistency, we can clear the fileInput:
-                fileInput.value = '';
-                // However, when user clicks upload, it uses selectedFile. Fine.
-            });
-
-            // Upload button
-            uploadBtn.addEventListener('click', uploadSelectedFile);
-
-            // Clear button
-            clearBtn.addEventListener('click', clearSelection);
-
-            // optional: if user clicks elsewhere, we don't clear selection, fine.
-
-            // initial render
-            renderApkList();
-            updatePreview();
-
-            // also prefill with a demo? not necessary. But we could add a demo if needed? no.
-
-            // Handle window unload to revoke object URLs (good practice)
-            window.addEventListener('beforeunload', () => {
-                apkFiles.forEach(apk => {
-                    if (apk.url) URL.revokeObjectURL(apk.url);
-                });
-            });
-
-            // Since we want the "emptyState" to be reused, it's already in the container initially.
-            // But when we do apkListContainer.innerHTML = '', we remove it and later append it again.
-            // We need a reference to the original empty state element.
-            // But we re-created? We stored it as const emptyState = document.getElementById('emptyState').
-            // However, after innerHTML = '', that element is removed from DOM but still referenced.
-            // Then we append it again – so it's fine. It's the same node, just moved.
-            // We must make sure it's not duplicated. renderApkList will append it only when empty.
-
-            // Extra: Override initial empty state render just to be safe
-            // (already in the container, but call renderApkList to reflect count)
-            // call again after setting up.
-            // But renderApkList() uses emptyState variable that is still valid (even if already in DOM).
-            // However, the initial container already contains emptyState and it might be duplicated?
-            // Let's check: initially apkListContainer contains the emptyState div.
-            // When we call renderApkList(), if apkFiles is empty, we do apkListContainer.innerHTML = '' which removes
-            // all children including the empty state. Then we append emptyState again. So no duplicate.
-            // It's fine.
-            // Edge: if apkFiles not empty, emptyState is detached, but still referenced.
-            // Good.
-        })();
-    </script>
+    })();
+  </script>
 </body>
 </html>
